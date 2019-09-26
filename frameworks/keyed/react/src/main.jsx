@@ -1,6 +1,20 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+let startTime;
+let lastMeasure;
+
+function startMeasure(name) {
+    startTime = performance.now();
+    lastMeasure = name;
+};
+function stopMeasure() {
+    window.setTimeout(() => {
+        const stop = performance.now();
+        console.log(lastMeasure+" took "+(stop-startTime));
+    }, 0);
+};
+
 function random(max) {
   return Math.round(Math.random() * 1000) % max;
 }
@@ -95,11 +109,17 @@ class Main extends React.Component {
   };
 
   run = () => {
+	startMeasure("add (1K)");
+	this.start = performance.now();
     this.setState({ data: buildData(1000), selected: 0 });
+    stopMeasure();
   }
 
   runLots = () => {
+    startMeasure("add (10K)");
+    this.start = performance.now();
     this.setState({ data: buildData(10000), selected: 0 });
+    stopMeasure();
   }
 
   add = () => {
@@ -107,12 +127,16 @@ class Main extends React.Component {
   }
 
   update = () => {
+	     startMeasure("update (every 10)");
+    this.start = performance.now();
+  
     const data = this.state.data;
     for (let i = 0; i < data.length; i += 10) {
       const item = data[i];
       data[i] = { id: item.id, label: item.label + ' !!!' };
     }
     this.forceUpdate();
+	    stopMeasure();
   }
 
   select = (item) => {
@@ -130,6 +154,8 @@ class Main extends React.Component {
   }
 
   swapRows = () => {
+	     startMeasure("swap rows");
+    this.start = performance.now();
     const data = this.state.data;
     if (data.length > 998) {
       let temp = data[1];
@@ -137,6 +163,7 @@ class Main extends React.Component {
       data[998] = temp;
     }
     this.forceUpdate();
+		    stopMeasure();
   }
 
   render() {
